@@ -78,7 +78,6 @@ class AcronymGrasps():
 
     def load_mesh(self):
         mesh_path_file = os.path.join(get_data_src() ,"objects" ,self.mesh_fname)
-        print(mesh_path_file)
 
         mesh = trimesh.load(mesh_path_file,  file_type='obj', force='mesh')
 
@@ -375,16 +374,25 @@ class PointcloudAcronymAndSDFDataset(Dataset):
 
         ## Grasps good/bad
         H_grasps = self._get_grasps(grasps_obj)
+        print(H_grasps,"1")
 
         ## rescale, rotate and translate ##
         xyz = xyz*self.scale
         sdf = sdf*self.scale
         pcl = pcl*self.scale
+        print(xyz, "xyz")
+        print(sdf, "sdf")
+        print(pcl, "pcl")
+        #print(H_grasps[..., :3, -1], "H_grasps[..., :3, -1]")
         H_grasps[..., :3, -1] = H_grasps[..., :3, -1]*self.scale
+        #print(H_grasps, "2")
         ## Random rotation ##
         R = special_ortho_group.rvs(3)
+        #print(R, "R")
         H = np.eye(4)
+        #print(H)
         H[:3, :3] = R
+        #print(H)
         mean = np.mean(pcl, 0)
         ## translate ##
         xyz = xyz - mean
@@ -393,6 +401,8 @@ class PointcloudAcronymAndSDFDataset(Dataset):
         ## rotate ##
         pcl = np.einsum('mn,bn->bm',R, pcl)
         xyz = np.einsum('mn,bn->bm',R, xyz)
+        #print(H, "H")
+        #print(H_grasps, 'H_grasps')
         H_grasps = np.einsum('mn,bnk->bmk', H, H_grasps)
         #######################
 
