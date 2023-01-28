@@ -18,7 +18,7 @@ makedirs(data_folder)
 
 
 for filename in os.listdir(acronym_path):
-    print(filename)
+    #print(filename)
     ## Load Acronym file
     load_file = os.path.join(acronym_path, filename)
     data = h5py.File(load_file, "r")
@@ -27,7 +27,7 @@ for filename in os.listdir(acronym_path):
     mesh_fname = data["object/file"][()].decode('utf-8')
     mesh_name = mesh_fname.split('/')[-1]
     mesh_type = mesh_fname.split('/')[1]
-    print(mesh_fname)
+    #print(mesh_fname)
 
     ## Generate Mesh folder and copy file
     mesh_folder = os.path.dirname(mesh_fname)

@@ -59,6 +59,7 @@ def load_grasp_diffusion(args):
             enc_dim=feat_enc_params['enc_dim'],
             latent_size= lat_params['latent_size'],
             dims = feat_enc_params['dims'],
+            in_dim= feat_enc_params['in_dim'], 
             out_dim=feat_enc_params['out_dim'],
             dropout=feat_enc_params['dropout'],
             dropout_prob=feat_enc_params['dropout_prob'],

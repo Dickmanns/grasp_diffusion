@@ -42,15 +42,15 @@ class AcronymGrasps():
         elif filename.endswith(".h5"):
             data = h5py.File(filename, "r")
             self.mesh_fname = data["object/file"][()].decode('utf-8')
-            self.mesh_type = self.mesh_fname.split('/')[1]
-            self.mesh_id = self.mesh_fname.split('/')[-1].split('.')[0]
+            self.mesh_type = self.mesh_fname.split('/')[0]
+            self.mesh_id = self.mesh_fname.split('.')[0]
             self.mesh_scale = data["object/scale"][()] if scale is None else scale
         else:
             raise RuntimeError("Unknown file ending:", filename)
 
         self.grasps, self.success = self.load_grasps(filename)
-        good_idxs = np.argwhere(self.success==1)[:,0]
-        bad_idxs  = np.argwhere(self.success==0)[:,0]
+        good_idxs = np.argwhere(self.success>0.95)[:,0]
+        bad_idxs  = np.argwhere(self.success<=0.95)[:,0]
         self.good_grasps = self.grasps[good_idxs,...]
         self.bad_grasps  = self.grasps[bad_idxs,...]
 
@@ -71,13 +71,14 @@ class AcronymGrasps():
         elif filename.endswith(".h5"):
             data = h5py.File(filename, "r")
             T = np.array(data["grasps/transforms"])
-            success = np.array(data["grasps/qualities/flex/object_in_gripper"])
+            success = np.array(data["grasps/qualities/Dexterity"])
         else:
             raise RuntimeError("Unknown file ending:", filename)
         return T, success
 
     def load_mesh(self):
-        mesh_path_file = os.path.join(get_data_src(), self.mesh_fname)
+        mesh_path_file = os.path.join(get_data_src() ,"objects" ,self.mesh_fname)
+        print(mesh_path_file)
 
         mesh = trimesh.load(mesh_path_file,  file_type='obj', force='mesh')
 
@@ -285,7 +286,7 @@ class PointcloudAcronymAndSDFDataset(Dataset):
 
         self.grasp_files = []
         for class_type_i in class_type:
-            cls_grasps_files = sorted(glob.glob(self.grasps_dir+'/'+class_type_i+'/*.h5'))
+            cls_grasps_files = sorted(glob.glob(self.grasps_dir+'/*.h5'))
 
             for grasp_file in cls_grasps_files:
                 g_obj = AcronymGrasps(grasp_file)
@@ -337,10 +338,9 @@ class PointcloudAcronymAndSDFDataset(Dataset):
         mesh_fname = grasp_obj.mesh_fname
         mesh_scale = grasp_obj.mesh_scale
 
-        mesh_type = mesh_fname.split('/')[1]
-        mesh_name = mesh_fname.split('/')[-1]
-        filename  = mesh_name.split('.obj')[0]
-        sdf_file = os.path.join(self.data_dir, 'sdf', mesh_type, filename+'.json')
+        
+        filename  = mesh_fname.split('.obj')[0]
+        sdf_file = os.path.join(self.data_dir, 'sdf', filename+'.json')
 
         with open(sdf_file, 'rb') as handle:
             sdf_dict = pickle.load(handle)

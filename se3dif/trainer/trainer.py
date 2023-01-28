@@ -32,7 +32,7 @@ def train(model, train_dataloader, epochs, lr, steps_til_summary, epochs_til_che
         makedirs(checkpoints_dir)
 
         exp_name = datetime.datetime.now().strftime("%m.%d.%Y %H:%M:%S")
-        writer = SummaryWriter(summaries_dir+ '/' + exp_name)
+        writer = SummaryWriter(summaries_dir+ '/' + "test")
 
     total_steps = 0
     with tqdm(total=len(train_dataloader) * epochs) as pbar:

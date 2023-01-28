@@ -4,7 +4,7 @@
   "single_object": false,
   "TrainSpecs": {
     "batch_size": 2,
-    "num_epochs": 90000,
+    "num_epochs": 100,
     "steps_til_summary": 500,
     "iters_til_checkpoint": 1000,
     "epochs_til_checkpoint": 10
@@ -13,8 +13,8 @@
   "NetworkSpecs" : {
     "feature_encoder": {
       "enc_dim": 132,
-      "in_dim": 3,
-      "out_dim": 7,
+      "in_dim": 4,
+      "out_dim": 8,
       "dims" : [ 512, 512, 512, 512, 512, 512, 512, 512],
       "dropout" : [0, 1, 2, 3, 4, 5, 6, 7],
       "dropout_prob" : 0.2,

@@ -70,6 +70,7 @@ def main(opt):
     test_dataset = copy.deepcopy(train_dataset)
     test_dataset.set_test_data()
     test_dataloader = DataLoader(test_dataset, batch_size=args['TrainSpecs']['batch_size'], shuffle=True, drop_last=True)
+    
 
     ## Model
     args['device'] = device
