@@ -12,6 +12,7 @@ pretrained_models_dir = get_pretrained_models_src()
 
 def load_model(args):
     if 'pretrained_model' in args:
+        print(args['pretrained_model'])
         model_args = load_experiment_specifications(os.path.join(pretrained_models_dir,
                                                                       args['pretrained_model']))
         args["NetworkArch"] = model_args["NetworkArch"]
@@ -107,6 +108,7 @@ def load_pointcloud_grasp_diffusion(args):
             enc_dim=feat_enc_params['enc_dim'],
             latent_size= v_enc_params['latent_size'],
             dims = feat_enc_params['dims'],
+            in_dim=feat_enc_params['in_dim'],
             out_dim=feat_enc_params['out_dim'],
             dropout=feat_enc_params['dropout'],
             dropout_prob=feat_enc_params['dropout_prob'],

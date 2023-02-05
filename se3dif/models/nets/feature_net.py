@@ -28,7 +28,7 @@ class TimeLatentFeatureEncoder(nn.Module):
         self,
         latent_size,
         dims,
-        in_dim = 3,
+        in_dim = 4,
         enc_dim = 256,
         out_dim = 1,
         dropout=None,
@@ -113,19 +113,24 @@ class TimeLatentFeatureEncoder(nn.Module):
 
     # input: N x (L+3)
     def forward(self, input, timesteps, latent_vecs=None):
+        print(input.shape, 'p, input')
+        print(timesteps.shape, 'k_ext, timesteps')
+        print(latent_vecs.shape, 'z_ext, latent_vecs')
 
         ## Encode TimeStep
         t_emb = self.time_embed(timesteps)
+        print(t_emb.shape, 't_emb (timesteps)')
         ## Encode Position
         x_emb = self.x_embed(input)
+        print(x_emb.shape, 'x_emb (input)')
         xyz = x_emb + t_emb
-
+        print(xyz.shape, 'xyz')
         if (latent_vecs is not None):
-            latent_vecs = F.dropout(latent_vecs, p=0.2, training=self.training)
             x = torch.cat([latent_vecs, xyz, input], -1)
         else:
             x = torch.cat([xyz, input], -1)
         x0 = x.clone()
+        print(x.shape, 'x')
 
         for layer in range(0, self.num_layers - 1):
             lin = getattr(self, "lin" + str(layer))

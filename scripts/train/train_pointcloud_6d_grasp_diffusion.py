@@ -44,13 +44,14 @@ def parse_args():
 
 
 def main(opt):
-
+    
     ## Load training args ##
     spec_file = os.path.join(opt.specs_file_dir, opt.spec_file)
     args = load_experiment_specifications(spec_file)
 
     # saving directories
     root_dir = opt.saving_root
+    print(root_dir)
     exp_dir  = os.path.join(root_dir, args['exp_log_dir'])
     args['saving_folder'] = exp_dir
 
@@ -99,7 +100,10 @@ def main(opt):
                 "lr": lr_schedules[2].get_learning_rate(0),
             },
         ])
-
+    #print(train_dataloader[0]['x_sdf'].shape)
+    #for step, (model_input, gt) in enumerate(train_dataloader):
+    #    print(model_input)
+                #print(model_input['x_sdf'].shape, 'before')
     # Train
     trainer.train(model=model.float(), train_dataloader=train_dataloader, epochs=args['TrainSpecs']['num_epochs'], model_dir= exp_dir,
                 summary_fn=summary, device=device, lr=1e-4, optimizers=[optimizer],
@@ -107,7 +111,7 @@ def main(opt):
                 epochs_til_checkpoint=args['TrainSpecs']['epochs_til_checkpoint'],
                 loss_fn=loss_fn, iters_til_checkpoint=args['TrainSpecs']['iters_til_checkpoint'],
                 clip_grad=False, val_loss_fn=val_loss_fn, overwrite=True,
-                val_dataloader=test_dataloader)
+                val_dataloader=None) #test_dataloader
 
 
 if __name__ == '__main__':

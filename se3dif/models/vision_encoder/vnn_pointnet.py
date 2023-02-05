@@ -24,7 +24,7 @@ class VNNPointnet2(nn.Module):
         self.vnn_resnet = VNN_ResnetPointnet(c_dim=int(out_features/3), device=device)
 
     def forward(self, pc):
-
+        
         xyz_feats = self.vnn_resnet(pc)
         return xyz_feats.reshape(pc.shape[0], -1)
 

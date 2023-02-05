@@ -18,13 +18,17 @@ class SDFLoss():
 
         ## Compute model output ##
         model.set_latent(c, batch=x_sdf.shape[1])
+        print(x_sdf.shape[1], 'batch')
+        print(x_sdf.view(-1, 3).shape, 'x_sdf view aka x, input')
         sdf = model.compute_sdf(x_sdf.view(-1, 3))
+        print(sdf.shape, 'sdf test')
 
         ## Reconstruction Loss ##
         loss = nn.L1Loss(reduction='mean')
         pred_clip_sdf = torch.clip(sdf, -10., self.delta)
         target_clip_sdf = torch.clip(label, -10., self.delta)
         l_rec = loss(pred_clip_sdf, target_clip_sdf)
+        print(l_rec, 'l_rec')
 
         ## Total Loss
         loss_dict[self.field] = l_rec

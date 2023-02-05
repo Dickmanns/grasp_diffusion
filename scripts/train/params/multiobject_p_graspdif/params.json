@@ -3,18 +3,18 @@
   "exp_log_dir": "multiobject_p_graspdif",
   "single_object": false,
   "TrainSpecs": {
-    "batch_size": 2,
-    "num_epochs": 100,
-    "steps_til_summary": 500,
-    "iters_til_checkpoint": 1000,
+    "batch_size": 1,
+    "num_epochs": 10,
+    "steps_til_summary": 200,
+    "iters_til_checkpoint": 500,
     "epochs_til_checkpoint": 10
   },
   "NetworkArch" : "PointcloudGraspDiffusion",
   "NetworkSpecs" : {
     "feature_encoder": {
       "enc_dim": 132,
-      "in_dim": 4,
-      "out_dim": 8,
+      "in_dim": 3,
+      "out_dim": 7,
       "dims" : [ 512, 512, 512, 512, 512, 512, 512, 512],
       "dropout" : [0, 1, 2, 3, 4, 5, 6, 7],
       "dropout_prob" : 0.2,

@@ -16,6 +16,9 @@ def get_pretrained_models_src():
 
 
 def get_data_src():
+    '''
+    bimanual data
+    '''
     makedirs(data_directory)
     return data_directory
 

@@ -9,7 +9,7 @@ specifications_filename = "params.json"
 def load_experiment_specifications(experiment_directory):
 
     filename = os.path.join(experiment_directory, specifications_filename)
-
+    print(filename)
     if not os.path.isfile(filename):
         raise Exception(
             "The experiment directory ({}) does not include specifications file "
