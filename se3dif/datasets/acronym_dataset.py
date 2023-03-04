@@ -89,7 +89,7 @@ class AcronymGrasps():
 
 
 class AcronymGraspsDirectory():
-    def __init__(self, filename=get_grasps_src(), data_type='Mug'):
+    def __init__(self, filename=get_grasps_src()):
         grasps_files = sorted(glob.glob(filename + '/1a3efcaaf8db9957a010c31b9816f48b_0.05676515519945774.h5'))
         self.avail_obj = []
         for grasp_file in grasps_files:
@@ -102,16 +102,14 @@ class AcronymAndSDFDataset(Dataset):
                  n_pointcloud = 1000, n_density = 200, n_coords = 1500,
                  augmented_rotation=True, visualize=False, split = True):
 
-        self.class_type = class_type
         self.data_dir = get_data_src()
-        self.acronym_data_dir = self.data_dir
 
-        self.grasps_dir = os.path.join(self.acronym_data_dir, 'grasps')
-        self.sdf_dir = os.path.join(self.acronym_data_dir, 'sdf')
+        self.grasps_dir = os.path.join(self.data_dir, 'grasps')
+        self.sdf_dir = os.path.join(self.data_dir, 'sdf')
 
-        self.generated_points_dir = os.path.join(self.acronym_data_dir, 'train_data')
+        self.generated_points_dir = os.path.join(self.data_dir, 'train_data')
 
-        grasps_files = sorted(glob.glob(self.grasps_dir+'/'+class_type+'/*.h5'))
+        grasps_files = sorted(glob.glob(self.grasps_dir+'/*.h5'))
 
         points_files = []
         sdf_files = []
@@ -268,7 +266,7 @@ class PointcloudAcronymAndSDFDataset(Dataset):
     'DataLoader for training DeepSDF with a Rotation Invariant Encoder model'
     def __init__(self, 
                  se3=False, phase='train', one_object=False,
-                 n_pointcloud = 1000, n_density = 200, n_coords = 1000,
+                 n_pointcloud = 1000, n_density = 400, n_coords = 1000,
                  augmented_rotation=True, visualize=False, split = True):
 
         self.data_dir = get_data_src()

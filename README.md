@@ -79,7 +79,7 @@ python scripts/sample/generate_pointcloud_6d_grasp_poses.py --n_grasps 10 --obj_
 
 Sample given a mug-specialized model
 ```azure
-python scripts/sample/generate_pointcloud_6d_grasp_poses.py --n_grasps 10 --obj_id 10 --obj_class 'Mug' --model 'model_final'
+python scripts/sample/generate_pointcloud_6d_grasp_poses.py --n_grasps 10 --obj_id 10 --model 'model_final'
 ```
 
 Sample given a partial pointcloud

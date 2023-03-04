@@ -65,10 +65,10 @@ def main(opt):
 
     ## Dataset
     train_dataset = datasets.AcronymAndSDFDataset(class_type=opt.class_type, augmented_rotation=False, one_object=args['single_object'])
-    train_dataloader = DataLoader(train_dataset, batch_size=args['TrainSpecs']['batch_size'], shuffle=True, drop_last=True)
+    train_dataloader = DataLoader(train_dataset, batch_size=args['TrainSpecs']['batch_size'], shuffle=False, drop_last=True)
 
     val_dataset = datasets.AcronymAndSDFDataset(class_type=opt.class_type, augmented_rotation=False, phase='validation')
-    val_dataloader = DataLoader(val_dataset, batch_size=args['TrainSpecs']['batch_size'], shuffle=True, drop_last=True)
+    val_dataloader = DataLoader(val_dataset, batch_size=args['TrainSpecs']['batch_size'], shuffle=False, drop_last=True)
 
     ## Model
     args['device'] = device
@@ -97,6 +97,7 @@ def main(opt):
                 "lr": lr_schedules[2].get_learning_rate(0),
             },
         ])
+    print('test')
 
     # Train
     trainer.train(model=model.float(), train_dataloader=train_dataloader, epochs=args['TrainSpecs']['num_epochs'], model_dir= exp_dir,

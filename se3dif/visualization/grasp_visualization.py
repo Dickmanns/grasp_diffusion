@@ -119,7 +119,14 @@ def visualize_grasps(Hs, scale=1., p_cloud=None, energies=None, colors=None, mes
     ## Grips
     grips = []
     for k in range(Hs.shape[0]):
+        print(Hs.shape)
         H = Hs[k,...]
+        print(type(H))
+        H1 = H[0]
+        H2 = H[1]
+        
+        print(H1)
+        print(H2)
 
         if colors is None:
             c = color[k]
@@ -127,8 +134,13 @@ def visualize_grasps(Hs, scale=1., p_cloud=None, energies=None, colors=None, mes
         else:
             c_vis = list(colors[k,...])
 
+        print(create_gripper_marker(color=c_vis, scale=scale))
+
         grips.append(
-            create_gripper_marker(color=c_vis, scale=scale).apply_transform(H)
+            create_gripper_marker(color=c_vis, scale=scale).apply_transform(H1),
+        )
+        grips.append(
+            create_gripper_marker(color=c_vis, scale=scale).apply_transform(H2),
         )
 
     ## Visualize grips and the object

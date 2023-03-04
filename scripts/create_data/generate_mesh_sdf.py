@@ -43,8 +43,6 @@ def get_unit_spherize_scale(mesh):
 def generate_mesh_sdf(mesh, absolute=True, normalize=False, n_points=200000):
 
     q_sdf, pcl = sample_sdf_near_surface(mesh, number_of_points=n_points, return_gradients=False)
-    print(q_sdf[0].shape, 'q_sdf 0 shape')
-    print(q_sdf[1].shape, 'q_sdf 0 shape')
     query_points, sdf = q_sdf[0], q_sdf[1]
 
     if absolute:
@@ -78,7 +76,6 @@ if __name__ == '__main__':
 
             if type(mesh) == trimesh.scene.scene.Scene:
                 mesh = trimesh.util.concatenate(mesh.dump())
-            print("__")
             scale = mesh.scale
             mesh.apply_scale(1/scale)
             H = np.eye(4)
@@ -97,7 +94,6 @@ if __name__ == '__main__':
 
             sdf_mesh = mesh_fname.split('.obj')[0] + '.json'
             save_file = os.path.join(save_sdf_folder, sdf_mesh)
-            print(sdf.shape, 'sdf shape')
             sdf_dict = {
                 'loc': loc,
                 'scale': scale,

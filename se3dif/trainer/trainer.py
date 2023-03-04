@@ -33,7 +33,6 @@ def train(model, train_dataloader, epochs, lr, steps_til_summary, epochs_til_che
 
         exp_name = datetime.datetime.now().strftime("%m.%d.%Y %H:%M:%S")
         writer = SummaryWriter(summaries_dir+ '/' + "test")
-
     total_steps = 0
     with tqdm(total=len(train_dataloader) * epochs) as pbar:
         train_losses = []
@@ -45,14 +44,14 @@ def train(model, train_dataloader, epochs, lr, steps_til_summary, epochs_til_che
                            np.array(train_losses))
 
             for step, (model_input, gt) in enumerate(train_dataloader):
-                print(":---------------------------------------:")
+                #---------------------print(":---------------------------------------:")
                 model_input = dict_to_device(model_input, device)
                 gt = dict_to_device(gt, device)
-                print(model_input['visual_context'].shape, 'pcl aka visual_context aka c,O')
-                print(model_input['visual_context'].squeeze(1).shape, 'squeeze O')
-                print(model_input['x_sdf'].shape, 'xyz aka x_sdf')
-                print(model_input['x_ene_pos'].shape, 'H_grasps aka x_ene_pos')
-                print(gt['sdf'].shape, 'gt')
+                #print(model_input['visual_context'].shape, 'pcl aka visual_context aka c,O')
+                #---------------------print(model_input['visual_context'].squeeze(1).shape, 'squeeze O')
+                #---------------------print(model_input['x_sdf'].shape, 'xyz aka x_sdf')
+                #---------------------print(model_input['x_ene_pos'].shape, 'H_grasps aka x_ene_pos')
+                #---------------------print(gt['sdf'].shape, 'gt')
 
                 start_time = time.time()
 

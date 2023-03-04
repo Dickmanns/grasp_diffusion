@@ -130,17 +130,35 @@ class Grasp_AnnealedLD():
 
         H1 = H0
         for k in range(self.k_steps):
+            H1, H2 = torch.tensor_split(H1,2,dim=1)
+            H1=H1.reshape(-1,4,4)
+            H2=H2.reshape(-1,4,4)
 
             ## 1.Set input variable to Theseus ##
             H0_in = SO3_R3(R=H1[:,:3,:3], t=H1[:,:3, -1])
             phi0 = H0_in.log_map()
 
+            H1_in = SO3_R3(R=H2[:,:3,:3], t=H2[:,:3, -1])
+            phi1 = H1_in.log_map()
+
             ## 2. Compute energy gradient ##
             phi0_in = phi0.detach().requires_grad_(True)
-            H_in = SO3_R3().exp_map(phi0_in).to_matrix()
-            t_in = phase*torch.ones_like(H_in[:,0,0])
+            H_in0 = SO3_R3().exp_map(phi0_in).to_matrix()
+            t_in = phase*torch.ones_like(H_in0[:,0,0])
+
+            phi1_in = phi1.detach().requires_grad_(True)
+            H_in1 = SO3_R3().exp_map(phi1_in).to_matrix()
+
+            H_in = torch.stack([H_in0, H_in1], dim=1)
+
+            
+
+
             e = self.model(H_in, t_in)
-            d_phi = torch.autograd.grad(e.sum(), phi0_in)[0]
+            d_phi0 = torch.autograd.grad(e.sum(), phi0_in, retain_graph=True)[0]
+            d_phi1 = torch.autograd.grad(e.sum(), phi1_in, retain_graph=True)[0]
+
+            #only_inputs=True, retain_graph=True, create_graph=True)
 
             ## 3. Compute noise vector ##
             if noise_off:
@@ -149,14 +167,25 @@ class Grasp_AnnealedLD():
                 noise = torch.randn_like(phi0_in)*noise_std
 
             ## 4. Compute translation ##
-            delta = -c_lr/2*d_phi + np.sqrt(c_lr)*noise
-            w_Delta = SO3().exp_map(delta[:, 3:])
-            t_delta = delta[:, :3]
+            delta0 = -c_lr/2*d_phi0 + np.sqrt(c_lr)*noise
+            w_Delta0 = SO3().exp_map(delta0[:, 3:])
+            t_delta0 = delta0[:, :3]
+
+            delta1 = -c_lr/2*d_phi1 + np.sqrt(c_lr)*noise
+            w_Delta1 = SO3().exp_map(delta1[:, 3:])
+            t_delta1 = delta1[:, :3]
 
             ## 5. Move the points ##
-            R1_out = th.compose(w_Delta, H0_in.R)
-            t1_out = H0_in.t + t_delta
+            R1_out = th.compose(w_Delta0, H0_in.R)
+            t1_out = H0_in.t + t_delta0
+
+            R2_out = th.compose(w_Delta1, H1_in.R)
+            t2_out = H1_in.t + t_delta1
+
             H1 = SO3_R3(R=R1_out, t=t1_out).to_matrix()
+            H2 = SO3_R3(R=R2_out, t=t2_out).to_matrix()
+            H1 = torch.stack([H1, H2], dim=1)
+
 
         return H1
 
@@ -166,9 +195,12 @@ class Grasp_AnnealedLD():
         if batch is None:
             batch = self.batch
         H0 = SO3_R3().sample(batch).to(self.device, torch.float32)
+        H1 = SO3_R3().sample(batch).to(self.device, torch.float32)
+
 
         ## 2.Langevin Dynamics (We evolve the data as [R3, SO(3)] pose)##
-        Ht = H0
+        Ht = torch.stack([H0,H1], dim=1)
+        print(self.T)
         if save_path:
             trj_H = Ht[None,...]
         for t in range(self.T):

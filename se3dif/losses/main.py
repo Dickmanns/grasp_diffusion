@@ -28,7 +28,7 @@ class LossDictionary():
         losses = {}
         infos = {}
         for field in self.fields:
-            print(self.fields, 'fields')
+            #---------------------print(self.fields, 'fields')
             loss_fn_k = self.loss_dict[field]
             loss, info = loss_fn_k(model, model_input, ground_truth, val)
             losses = {**losses, **loss}

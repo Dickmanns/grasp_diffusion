@@ -127,7 +127,7 @@ def load_pointcloud_grasp_diffusion(args):
     else:
         points = models.points.get_3d_pts(n_points=points_params['n_points'])
     # Energy Based Model
-    in_dim = points_params['n_points']*feat_enc_params['out_dim']
+    in_dim = 2*points_params['n_points']*feat_enc_params['out_dim']
     hidden_dim = 512
     energy_net = nn.Sequential(
             nn.Linear(in_dim, hidden_dim),

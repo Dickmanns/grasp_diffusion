@@ -22,7 +22,6 @@ def parse_args():
 
     p.add_argument('--obj_id', type=str, default='0')
     p.add_argument('--n_grasps', type=str, default='200')
-    p.add_argument('--obj_class', type=str, default='Laptop')
     p.add_argument('--model', type=str, default='grasp_dif_multi')
 
 
@@ -49,8 +48,8 @@ def get_approximated_grasp_diffusion_field(p, args, device='cpu'):
     return generator, model
 
 
-def sample_pointcloud(obj_id=0, obj_class='Mug'):
-    acronym_grasps = AcronymGraspsDirectory(data_type=obj_class)
+def sample_pointcloud(obj_id=0):
+    acronym_grasps = AcronymGraspsDirectory()
     mesh = acronym_grasps.avail_obj[obj_id].load_mesh()
 
     P = mesh.sample(1000)
@@ -77,17 +76,16 @@ if __name__ == '__main__':
     args = parse_args()
 
     print('##########################################################')
-    print('Object Class: {}'.format(args.obj_class))
+    print('Object Class: None')
     print(args.obj_id)
     print('##########################################################')
 
     n_grasps = int(args.n_grasps)
     obj_id = int(args.obj_id)
-    obj_class = args.obj_class
     n_envs = 30
 
     ## Set Model and Sample Generator ##
-    P, mesh = sample_pointcloud(obj_id, obj_class)
+    P, mesh = sample_pointcloud(obj_id)
     generator, model = get_approximated_grasp_diffusion_field(P, args, device)
 
     H = generator.sample()
@@ -99,5 +97,9 @@ if __name__ == '__main__':
     vis_H = H.squeeze()
     P *=1/8
     mesh = mesh.apply_scale(1/8)
+    print(H.shape, 'H')
+    print(to_numpy(H).shape, 'to_numpy(H)')
+    print(P.shape, 'P')
+    print(mesh, 'mesh')
     grasp_visualization.visualize_grasps(to_numpy(H), p_cloud=P, mesh=mesh)
 

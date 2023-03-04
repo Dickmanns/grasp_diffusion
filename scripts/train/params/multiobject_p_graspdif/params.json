@@ -4,10 +4,10 @@
   "single_object": false,
   "TrainSpecs": {
     "batch_size": 1,
-    "num_epochs": 10,
+    "num_epochs": 1000,
     "steps_til_summary": 200,
     "iters_til_checkpoint": 500,
-    "epochs_til_checkpoint": 10
+    "epochs_til_checkpoint": 1000
   },
   "NetworkArch" : "PointcloudGraspDiffusion",
   "NetworkSpecs" : {

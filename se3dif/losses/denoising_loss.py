@@ -18,23 +18,30 @@ class ProjectedSE3DenoisingLoss():
         return torch.sqrt((sigma ** (2 * t) - 1.) / (2. * np.log(sigma)))
 
     def loss_fn(self, model, model_input, ground_truth, val=False, eps=1e-5):
-        print('_________________________________denoising_______________________')
+        #---------------------print('_________________________________denoising_______________________')
 
         ## Set input ##
         H = model_input['x_ene_pos']
         c = model_input['visual_context']
 
-        print(H.shape, 'H')
-        print(c.shape, 'c o')
-        print(H.shape[1], 'batch')
+        #---------------------print(H.shape, 'H')
+        #---------------------print(c.shape, 'c o')
+        #---------------------print(H.shape[1], 'batch')
         model.set_latent(c, batch=H.shape[1])
+        '''print(H.shape, 'H-shape before')'''
         '''H = H.reshape(-1, 4, 4)'''
-        H = H.reshape(200, 2, 4, 4)
+        H = H.reshape(-1, 2, 4, 4)
+        #print(type(H), 'H type')
         H1, H2 = torch.tensor_split(H,2,dim=1)
-        H1=H1.reshape(200,4,4)
-        H2=H2.reshape(200,4,4)
+        '''print(H.shape, 'H-shape after')
+        print(H1.shape, 'H1-shape before')
+        print(H2.shape, 'H1-shape before')'''
+        H1=H1.reshape(-1,4,4)
+        H2=H2.reshape(-1,4,4)
+        '''print(H1.shape, 'H1-shape after')
+        print(H2.shape, 'H1-shape after')'''
 
-        print(H.shape, 'H shape')
+        #---------------------print(H.shape, 'H shape')
         #print(H, 'H new')
 
         ## 1. H to vector ##
@@ -53,22 +60,21 @@ class ProjectedSE3DenoisingLoss():
         perturbed_x = perturbed_x.detach()
         perturbed_x.requires_grad_(True)'''
         #for first grasp
-        random_t1 = torch.rand_like(xw1[...,0], device=xw1.device) * (1. - eps) + eps
+        random_t = torch.rand_like(xw1[...,0], device=xw1.device) * (1. - eps) + eps
         z1 = torch.randn_like(xw1)
-        std1 = self.marginal_prob_std(random_t1)
+        std1 = self.marginal_prob_std(random_t)
         perturbed_x1 = xw1 + z1 * std1[..., None]
         perturbed_x1 = perturbed_x1.detach()
         perturbed_x1.requires_grad_(True)
 
         #for second grasp
-        random_t2 = torch.rand_like(xw2[...,0], device=xw2.device) * (1. - eps) + eps
         z2 = torch.randn_like(xw2)
-        std2 = self.marginal_prob_std(random_t2)
+        std2 = self.marginal_prob_std(random_t)
         perturbed_x2 = xw2 + z2 * std2[..., None]
         perturbed_x2 = perturbed_x2.detach()
         perturbed_x2.requires_grad_(True)
 
-        print(perturbed_x2.shape, 'perturbed_x2')
+        #---------------------print(perturbed_x2.shape, 'perturbed_x2')
 
 
         ## Get gradient ##
@@ -79,7 +85,6 @@ class ProjectedSE3DenoisingLoss():
             perturbed_H2 = SO3_R3().exp_map(perturbed_x2).to_matrix()
 
             perturbed_H = torch.stack([perturbed_H1,perturbed_H2], dim=1)
-            random_t = torch.stack([random_t1, random_t2], dim=1)
             perturbed_x = torch.stack([perturbed_x1, perturbed_x2], dim=1)
             
             
@@ -99,7 +104,7 @@ class ProjectedSE3DenoisingLoss():
 
         loss_fn = nn.L1Loss()
         loss = loss_fn(grad_energy, z_target)/10.
-        print(loss, 'loss')
+        #---------------------print(loss, 'loss')
 
         info = {self.field: grad_energy}
         loss_dict = {"Score loss": loss}
